@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Tài Xỉu Animation</title>
+    <title>Tài Xỉu Realtime</title>
 
     <style>
         body {
@@ -76,7 +76,7 @@
 
 <body>
 
-    <h1>TÀI XỈU 🎲</h1>
+    <h1>TÀI XỈU 🎲 (Realtime)</h1>
 
     <div id="container">
 
@@ -84,55 +84,67 @@
         <div id="d2" class="diceBox">🎲</div>
         <div id="d3" class="diceBox">🎲</div>
 
-        <button id="button" onclick="play()">Xóc xúc xắc!</button>
+        <button id="button" onclick="sendRoll()">Xóc xúc xắc!</button>
 
         <div id="result"></div>
 
     </div>
 
+    <!-- SOCKET -->
+    <script src="/socket.io/socket.io.js"></script>
+
     <script>
-        function roll(){
-            return Math.floor(Math.random()*6)+1;
-        }
+        const socket = io();
+
+        const d1 = document.getElementById("d1");
+        const d2 = document.getElementById("d2");
+        const d3 = document.getElementById("d3");
+        const result = document.getElementById("result");
 
         function emoji(n){
             return ["⚀","⚁","⚂","⚃","⚄","⚅"][n-1];
         }
 
-        function play(){
-            let box1=document.getElementById("d1");
-            let box2=document.getElementById("d2");
-            let box3=document.getElementById("d3");
-            let result=document.getElementById("result");
+        socket.on("dice-result", data => {
+            animateDice();
+            setTimeout(()=>{
+                updateDice(
+                    data.d1,
+                    data.d2,
+                    data.d3,
+                    data.total
+                );
+            },600);
+        });
 
-            box1.classList.add("spin");
-            box2.classList.add("spin");
-            box3.classList.add("spin");
+        function sendRoll(){
+            socket.emit("roll-dice");
+        }
+
+        function animateDice(){
+            d1.classList.add("spin");
+            d2.classList.add("spin");
+            d3.classList.add("spin");
 
             setTimeout(()=>{
-
-                let a=roll();
-                let b=roll();
-                let c=roll();
-
-                box1.innerHTML = emoji(a);
-                box2.innerHTML = emoji(b);
-                box3.innerHTML = emoji(c);
-
-                let total=a+b+c;
-
-                result.innerHTML =
-                    "🎯 Tổng: <b>"+total+"</b><br>" +
-                    (total>=11?
-                        "<span style='color:#00ff00;font-size:45px;'>TÀI</span>":
-                        "<span style='color:yellow;font-size:45px;'>XỈU</span>"
-                    );
-
-                box1.classList.remove("spin");
-                box2.classList.remove("spin");
-                box3.classList.remove("spin");
-
+                d1.classList.remove("spin");
+                d2.classList.remove("spin");
+                d3.classList.remove("spin");
             },600);
+        }
+
+        function updateDice(a,b,c,total){
+
+            d1.innerHTML = emoji(a);
+            d2.innerHTML = emoji(b);
+            d3.innerHTML = emoji(c);
+
+            result.innerHTML =
+                "🎯 Tổng: <b>"+total+"</b><br>" +
+                (total>=11?
+                    "<span style='color:#00ff00;font-size:45px;'>TÀI</span>":
+                    "<span style='color:yellow;font-size:45px;'>XỈU</span>"
+                );
         }
     </script>
 
