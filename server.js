@@ -3,35 +3,57 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
-// Serve static website
 app.use(express.static('public'));
 
-// Default homepage
 app.get("/", (req, res) => {
     res.sendFile(__dirname + "/public/index.html");
 });
-
-// Lobby page fix
 app.get("/lobby", (req, res) => {
     res.sendFile(__dirname + "/public/lobby.html");
 });
-
-// Tài xỉu page fix
 app.get("/taixiu", (req, res) => {
     res.sendFile(__dirname + "/public/taixiu.html");
 });
 
-// SOCKET IO
+// BOT auto
+function botPick(){
+    return Math.random() < 0.5 ? "TAI" : "XIU";
+}
+
+setInterval(()=>{
+
+    let d1 = Math.floor(Math.random()*6)+1;
+    let d2 = Math.floor(Math.random()*6)+1;
+    let d3 = Math.floor(Math.random()*6)+1;
+    let total = d1+d2+d3;
+    let result = total <= 10 ? "XIU" : "TAI";
+
+    let botGuess = botPick();
+
+    io.emit("bot-result", {
+        botGuess,
+        result
+    });
+
+}, 6000);
+
+// Realtime
 io.on("connection", socket => {
 
     socket.on("join-room", room => {
+        let size = io.sockets.adapter.rooms.get(room)?.size || 0;
+        if(size >= 8){
+            socket.emit("room-full");
+            return;
+        }
         socket.join(room);
+        socket.emit("joined", room);
     });
 
     socket.on("roll-dice-room", room => {
-        let d1 = Math.floor(Math.random()*6) + 1;
-        let d2 = Math.floor(Math.random()*6) + 1;
-        let d3 = Math.floor(Math.random()*6) + 1;
+        let d1 = Math.floor(Math.random()*6)+1;
+        let d2 = Math.floor(Math.random()*6)+1;
+        let d3 = Math.floor(Math.random()*6)+1;
 
         io.to(room).emit("dice-result", {
             d1, d2, d3,
