@@ -2,60 +2,137 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Tài Xỉu Online</title>
+    <title>Tài Xỉu Animation</title>
+
     <style>
         body {
+            background: radial-gradient(circle,#1a1a1a,#000);
+            color: white;
             font-family: Arial, sans-serif;
             text-align: center;
-            background: #111;
-            color: #fff;
+            padding-top: 40px;
         }
-        #dice {
-            font-size: 70px;
-            margin: 20px;
+
+        h1 {
+            font-size: 45px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px #ff0000;
         }
-        button {
-            padding: 15px 30px;
-            font-size: 20px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
+
+        #container {
+            display: inline-block;
+            padding: 30px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
         }
-        #resultBox {
-            font-size: 30px;
+
+        .diceBox {
+            font-size: 90px;
+            margin: 10px;
+            display: inline-block;
+            width: 120px;
+            height: 120px;
+            line-height: 120px;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            transition: transform 0.5s;
+        }
+
+        .spin {
+            animation: roll 0.6s;
+        }
+
+        @keyframes roll {
+            0% {transform: rotate(0deg) scale(1);}
+            50% {transform: rotate(360deg) scale(1.3);}
+            100% {transform: rotate(720deg) scale(1);}
+        }
+
+        #button {
             margin-top: 20px;
+            padding: 15px 40px;
+            font-size: 25px;
+            background: crimson;
+            border: none;
+            color: white;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #button:hover {
+            background: red;
+        }
+
+        #result {
+            margin-top: 25px;
+            font-size: 35px;
+            text-shadow: 0 0 10px yellow;
         }
     </style>
 </head>
+
 <body>
 
-    <h1>Tài Xỉu</h1>
+    <h1>TÀI XỈU 🎲</h1>
 
-    <div id="dice">🎲 🎲 🎲</div>
+    <div id="container">
 
-    <button onclick="play()">Xóc xúc xắc!</button>
+        <div id="d1" class="diceBox">🎲</div>
+        <div id="d2" class="diceBox">🎲</div>
+        <div id="d3" class="diceBox">🎲</div>
 
-    <div id="resultBox"></div>
+        <button id="button" onclick="play()">Xóc xúc xắc!</button>
+
+        <div id="result"></div>
+
+    </div>
 
     <script>
-        function roll() {
-            return Math.floor(Math.random() * 6) + 1;
+        function roll(){
+            return Math.floor(Math.random()*6)+1;
         }
 
-        function play() {
-            let d1 = roll();
-            let d2 = roll();
-            let d3 = roll();
+        function emoji(n){
+            return ["⚀","⚁","⚂","⚃","⚄","⚅"][n-1];
+        }
 
-            document.getElementById("dice").innerHTML =
-                d1 + " 🎲 " + d2 + " 🎲 " + d3;
+        function play(){
+            let box1=document.getElementById("d1");
+            let box2=document.getElementById("d2");
+            let box3=document.getElementById("d3");
+            let result=document.getElementById("result");
 
-            let total = d1 + d2 + d3;
+            box1.classList.add("spin");
+            box2.classList.add("spin");
+            box3.classList.add("spin");
 
-            let result = (total >= 11 ? "TÀI" : "XỈU");
+            setTimeout(()=>{
 
-            document.getElementById("resultBox").innerHTML =
-                "Tổng điểm = " + total + "<br>Kết quả: " + result;
+                let a=roll();
+                let b=roll();
+                let c=roll();
+
+                box1.innerHTML = emoji(a);
+                box2.innerHTML = emoji(b);
+                box3.innerHTML = emoji(c);
+
+                let total=a+b+c;
+
+                result.innerHTML =
+                    "🎯 Tổng: <b>"+total+"</b><br>" +
+                    (total>=11?
+                        "<span style='color:#00ff00;font-size:45px;'>TÀI</span>":
+                        "<span style='color:yellow;font-size:45px;'>XỈU</span>"
+                    );
+
+                box1.classList.remove("spin");
+                box2.classList.remove("spin");
+                box3.classList.remove("spin");
+
+            },600);
         }
     </script>
 
