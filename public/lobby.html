@@ -1,44 +1,21 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Lobby</title>
-<style>
-    body {background:#111;color:white;font-family:Arial;text-align:center;}
-    button {padding:20px;font-size:22px;margin:10px;border-radius:10px;}
-    input {padding:10px;font-size:20px;border-radius:10px;}
-</style>
+    <title>Lobby</title>
 </head>
 <body>
+    <h1>Sảnh phòng tài xỉu</h1>
 
-<h1>🎮 Sảnh phòng Tài Xỉu</h1>
+    <input id="roomID" placeholder="Nhập room ID">
+    <button onclick="joinRoom()">Join room</button>
 
-<button onclick="createRoom()">Tạo phòng mới</button>
-
-<div style="margin-top:20px;">
-    <input id="roomInput" placeholder="Nhập ID phòng">
-    <button onclick="joinRoom()">Vào phòng</button>
-</div>
-
-<script src="/socket.io/socket.io.js"></script>
-<script>
-const socket = io();
-
-function createRoom(){
-    socket.emit("create-room");
-}
-
-socket.on("room-created", id=>{
-    window.location.href = `taixiu.html?room=${id}`;
-});
-
-function joinRoom(){
-    let id = document.getElementById("roomInput").value.trim();
-    if(id !== ""){
-        window.location.href = `taixiu.html?room=${id}`;
-    }
-}
-</script>
-
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        function joinRoom(){
+            let id = document.getElementById("roomID").value;
+            window.location.href = "/taixiu?room=" + id;
+        }
+    </script>
 </body>
 </html>
