@@ -76,7 +76,7 @@
 
 <body>
 
-    <h1>TÀI XỈU 🎲 (Realtime)</h1>
+    <h1>TÀI XỈU 🎲 (Realtime Room)</h1>
 
     <div id="container">
 
@@ -92,10 +92,16 @@
 
     <!-- SOCKET -->
     <script src="/socket.io/socket.io.js"></script>
-
     <script>
         const socket = io();
 
+        // ----- ROOM ID -----
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomID = urlParams.get("room") || "default";
+
+        socket.emit("join-room", roomID);
+
+        // ----- UI -----
         const d1 = document.getElementById("d1");
         const d2 = document.getElementById("d2");
         const d3 = document.getElementById("d3");
@@ -118,7 +124,7 @@
         });
 
         function sendRoll(){
-            socket.emit("roll-dice");
+            socket.emit("roll-dice-room", roomID);
         }
 
         function animateDice(){

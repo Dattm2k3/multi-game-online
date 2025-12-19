@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lobby</title>
+<style>
+    body {background:#111;color:white;font-family:Arial;text-align:center;}
+    button {padding:20px;font-size:22px;margin:10px;border-radius:10px;}
+</style>
+</head>
+<body>
+
+<h1>🎮 Sảnh game</h1>
+
+<button onclick="createRoom()">Tạo phòng mới</button>
+
+<div>
+    <input id="roomInput" placeholder="Nhập ID phòng">
+    <button onclick="joinRoom()">Vào phòng</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+
+function createRoom(){
+    socket.emit("create-room");
+}
+
+socket.on("room-created", id=>{
+    window.location.href = `taixiu.html?room=${id}`;
+});
+
+function joinRoom(){
+    let id = document.getElementById("roomInput").value;
+    if(id.trim() !== ""){
+        window.location.href = `taixiu.html?room=${id}`;
+    }
+}
+</script>
+
+</body>
+</html>
