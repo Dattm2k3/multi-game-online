@@ -3,45 +3,44 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
+// Serve static website
 app.use(express.static('public'));
 
+// Default homepage
+app.get("/", (req, res) => {
+    res.sendFile(__dirname + "/public/index.html");
+});
+
+// Lobby page fix
+app.get("/lobby", (req, res) => {
+    res.sendFile(__dirname + "/public/lobby.html");
+});
+
+// Tài xỉu page fix
+app.get("/taixiu", (req, res) => {
+    res.sendFile(__dirname + "/public/taixiu.html");
+});
+
+// SOCKET IO
 io.on("connection", socket => {
 
-    console.log("User joined:", socket.id);
-
-    // join room
-    socket.on("join-room", roomID => {
-        socket.join(roomID);
-        console.log(socket.id, "joined", roomID);
+    socket.on("join-room", room => {
+        socket.join(room);
     });
 
-    // create room
-    socket.on("create-room", () => {
-        let roomID = "R" + Math.floor(Math.random()*1000000);
-        socket.join(roomID);
-        socket.emit("room-created", roomID);
-        console.log("Room created:", roomID);
-    });
-
-    // roll dice in room
-    socket.on("roll-dice-room", roomID => {
-
+    socket.on("roll-dice-room", room => {
         let d1 = Math.floor(Math.random()*6) + 1;
         let d2 = Math.floor(Math.random()*6) + 1;
         let d3 = Math.floor(Math.random()*6) + 1;
 
-        io.to(roomID).emit("dice-result", {
+        io.to(room).emit("dice-result", {
             d1, d2, d3,
-            total: d1 + d2 + d3
+            total: d1+d2+d3
         });
-    });
-
-    socket.on("disconnect", () => {
-        console.log("User left:", socket.id);
     });
 
 });
 
 http.listen(process.env.PORT || 3000, () => {
-    console.log('Server is running...');
+    console.log("SERVER ĐANG CHẠY...");
 });
