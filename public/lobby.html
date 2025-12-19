@@ -6,15 +6,16 @@
 <style>
     body {background:#111;color:white;font-family:Arial;text-align:center;}
     button {padding:20px;font-size:22px;margin:10px;border-radius:10px;}
+    input {padding:10px;font-size:20px;border-radius:10px;}
 </style>
 </head>
 <body>
 
-<h1>🎮 Sảnh game</h1>
+<h1>🎮 Sảnh phòng Tài Xỉu</h1>
 
 <button onclick="createRoom()">Tạo phòng mới</button>
 
-<div>
+<div style="margin-top:20px;">
     <input id="roomInput" placeholder="Nhập ID phòng">
     <button onclick="joinRoom()">Vào phòng</button>
 </div>
@@ -32,8 +33,8 @@ socket.on("room-created", id=>{
 });
 
 function joinRoom(){
-    let id = document.getElementById("roomInput").value;
-    if(id.trim() !== ""){
+    let id = document.getElementById("roomInput").value.trim();
+    if(id !== ""){
         window.location.href = `taixiu.html?room=${id}`;
     }
 }

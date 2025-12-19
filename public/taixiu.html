@@ -90,18 +90,15 @@
 
     </div>
 
-    <!-- SOCKET -->
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
 
-        // ----- ROOM ID -----
         const urlParams = new URLSearchParams(window.location.search);
         const roomID = urlParams.get("room") || "default";
 
         socket.emit("join-room", roomID);
 
-        // ----- UI -----
         const d1 = document.getElementById("d1");
         const d2 = document.getElementById("d2");
         const d3 = document.getElementById("d3");
@@ -140,7 +137,6 @@
         }
 
         function updateDice(a,b,c,total){
-
             d1.innerHTML = emoji(a);
             d2.innerHTML = emoji(b);
             d3.innerHTML = emoji(c);

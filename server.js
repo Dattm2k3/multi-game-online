@@ -1,23 +1,31 @@
+const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+app.use(express.static('public'));
+
 io.on("connection", socket => {
 
     console.log("User joined:", socket.id);
 
-    // người chơi join room
+    // join room
     socket.on("join-room", roomID => {
         socket.join(roomID);
         console.log(socket.id, "joined", roomID);
     });
 
-    // tạo phòng mới
+    // create room
     socket.on("create-room", () => {
-        let roomID = "R" + Math.floor(Math.random()*100000);
+        let roomID = "R" + Math.floor(Math.random()*1000000);
         socket.join(roomID);
         socket.emit("room-created", roomID);
         console.log("Room created:", roomID);
     });
 
-    // xúc xắc theo từng phòng
+    // roll dice in room
     socket.on("roll-dice-room", roomID => {
+
         let d1 = Math.floor(Math.random()*6) + 1;
         let d2 = Math.floor(Math.random()*6) + 1;
         let d3 = Math.floor(Math.random()*6) + 1;
@@ -32,4 +40,8 @@ io.on("connection", socket => {
         console.log("User left:", socket.id);
     });
 
+});
+
+http.listen(process.env.PORT || 3000, () => {
+    console.log('Server is running...');
 });
